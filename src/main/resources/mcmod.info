@@ -1,0 +1,16 @@
+[
+{
+  "modid": "oldobsidian",
+  "name": "Old Obsidian",
+  "description": "Re-add the old obsidian generation behavior with redstone wire",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["legobmw99"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
