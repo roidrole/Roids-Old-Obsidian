@@ -1,7 +1,6 @@
 package com.legobmw99.oldobsidian;
 
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +21,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class OldObsidian {
 	public static final String MODID = "oldobsidian";
 	public static final String VERSION = "1.1";
-	public static Block blockWetstone;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
