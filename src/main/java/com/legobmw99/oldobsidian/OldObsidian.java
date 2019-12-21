@@ -28,12 +28,16 @@ public class OldObsidian {
 	@SubscribeEvent
 	public void onNotify(NeighborNotifyEvent e) {
 		World world = e.getWorld();
-		if(world.getBlockState(e.getPos()).getMaterial() == Material.LAVA) { //Make sure block updating is lava
-			for(EnumFacing side1: EnumFacing.VALUES) { //Iterate through relevant sides
+		if(world.getBlockState(e.getPos()).getMaterial() == Material.LAVA) {
+			//Make sure block updating is lava
+			for(EnumFacing side1: EnumFacing.VALUES) {
+				//Iterate through relevant sides
 				IBlockState state = world.getBlockState(e.getPos().offset(side1));
 				if (state.getBlock() == Blocks.REDSTONE_WIRE 
-					&& state.getValue(BlockRedstoneWire.POWER) == 0) { //See if they are unpowered redstone
-					for(EnumFacing side2: EnumFacing.HORIZONTALS) { //Iterate through the horizontal sides of the redstone
+					&& state.getValue(BlockRedstoneWire.POWER) == 0) {
+					//See if they are unpowered redstone
+					for(EnumFacing side2: EnumFacing.HORIZONTALS) {
+						//Iterate through the horizontal sides of the redstone
 						//Check if water is present
 						if(world.getBlockState(e.getPos().offset(side1).offset(side2)).getMaterial() == Material.WATER) {
 							//Set the block to obsidian and play an effect
