@@ -1,6 +1,6 @@
 JsonedOldObsidian 1.0
 =========
-[![ CurseForge](http://cf.way2muchnoise.eu/284764.svg)](https://minecraft.curseforge.com/projects/jsoned-old-obsidian)
+[![ CurseForge](http://cf.way2muchnoise.eu/355519.svg)](https://minecraft.curseforge.com/projects/jsoned-old-obsidian)
 
 This mod re-adds the old buggy behavior which allowed the conversion of redstone into obsidian
 
