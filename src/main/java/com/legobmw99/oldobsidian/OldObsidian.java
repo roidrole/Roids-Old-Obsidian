@@ -16,12 +16,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import us.timinc.jsonedoldobsidian.ModInfo;
 
-@Mod(modid = OldObsidian.MODID, version = OldObsidian.VERSION)
+@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION)
 public class OldObsidian {
-	public static final String MODID = "oldobsidian";
-	public static final String VERSION = "1.1";
-
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(this);
