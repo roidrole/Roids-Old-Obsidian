@@ -1,14 +1,14 @@
 [
 {
-  "modid": "oldobsidian",
-  "name": "Old Obsidian",
-  "description": "Re-add the old obsidian generation behavior with redstone wire",
+  "modid": "jsonedoldobsidian",
+  "name": "Jsoned Old Obsidian",
+  "description": "Re-add the old obsidian generation behavior with redstone wire, now jsonified!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["legobmw99"],
-  "credits": "",
+  "authorList": ["timinc"],
+  "credits": "legobmw99, for creating the original mod this is based on",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
