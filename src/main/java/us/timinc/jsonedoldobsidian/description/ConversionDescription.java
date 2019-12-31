@@ -26,7 +26,7 @@ public class ConversionDescription {
 
 	public boolean matchesDust(IBlockState state) {
 		return matchesArrayOrString(state, dusts, dust)
-				&& (checkDustPower && state.getValue(BlockRedstoneWire.POWER) == 0);
+				&& (!checkDustPower || state.getValue(BlockRedstoneWire.POWER) == 0);
 	}
 
 	private boolean matchesArrayOrString(IBlockState state, String[] pool, String entry) {
