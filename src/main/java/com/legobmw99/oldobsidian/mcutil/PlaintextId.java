@@ -1,4 +1,4 @@
-package us.timinc.mcutil;
+package com.legobmw99.oldobsidian.mcutil;
 
 import java.util.regex.Pattern;
 
@@ -117,7 +117,7 @@ public class PlaintextId {
 
 	public enum IdType {
 		CHECK, OBJ
-	};
+	}
 
 	public static String fixMetadata(String itemId, IdType idType) {
 		String[] splitMetadata = itemId.split(":");

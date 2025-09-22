@@ -1,12 +1,12 @@
-package us.timinc.jsonedoldobsidian.description;
+package com.legobmw99.oldobsidian.description;
 
 import java.util.Arrays;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
-import us.timinc.mcutil.PlaintextId;
+import com.legobmw99.oldobsidian.mcutil.PlaintextId;
 
-public class ConversionDescription {
+public class ConversionDescription implements IConversion {
 	public String liquid1 = "";
 	public String[] liquids1 = {};
 	public String liquid2 = "";
@@ -31,11 +31,13 @@ public class ConversionDescription {
 
 	private boolean matchesArrayOrString(IBlockState state, String[] pool, String entry) {
 		if (entry.isEmpty()) {
-			return Arrays.stream(pool).anyMatch(e -> {
-				return PlaintextId.matches(e, PlaintextId.getBlockId(state));
-			});
+			return Arrays.stream(pool).anyMatch(e -> PlaintextId.matches(e, PlaintextId.getBlockId(state)));
 		} else {
 			return PlaintextId.matches(entry, PlaintextId.getBlockId(state));
 		}
+	}
+
+	public IBlockState getResult(){
+		return PlaintextId.getBlockStateFrom(this.result);
 	}
 }

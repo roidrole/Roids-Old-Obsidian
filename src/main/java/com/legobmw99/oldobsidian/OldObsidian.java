@@ -1,6 +1,9 @@
 package com.legobmw99.oldobsidian;
 
-import net.minecraft.entity.player.EntityPlayer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.legobmw99.oldobsidian.description.IConversion;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
@@ -12,53 +15,84 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import us.timinc.jsonedoldobsidian.DescriptionLoader;
-import us.timinc.jsonedoldobsidian.description.ConversionDescription;
-import us.timinc.mcutil.PlaintextId;
+import org.apache.logging.log4j.Logger;
+import com.legobmw99.oldobsidian.description.ConversionDescription;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mod(
     modid = Tags.MOD_ID,
     name = Tags.MOD_NAME,
-    version = Tags.VERSION,
+    version = Tags.VERSION
 )
 public class OldObsidian {
-	private static DescriptionLoader CONVERSIONS;
+	private static Set<IConversion> CONVERSIONS;
+	public static Logger LOGGER;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		CONVERSIONS = new DescriptionLoader();
+		LOGGER = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(this);
+
+		Gson gson = new GsonBuilder().create();
+		try {
+			CONVERSIONS = Files.walk(Paths.get("oldobsidian"))
+				.map(Path::toFile)
+				.filter(File::isFile)
+				.flatMap(file -> {
+					try {
+						//Make logWarn
+						return Arrays.stream(gson.fromJson(new FileReader(file), ConversionDescription[].class));
+					} catch (Exception e) {
+						OldObsidian.LOGGER.error("An error has occured when loading json file: {}", file, e);
+					}
+					return java.util.stream.Stream.empty();
+				})
+				.collect(Collectors.toSet())
+			;
+		} catch (IOException e) {
+			OldObsidian.LOGGER.error("An unexpected error has occured when loading json files", e);
+		}
 	}
 
 	@SubscribeEvent
 	public void onNotify(NeighborNotifyEvent e) {
 		World world = e.getWorld();
 		BlockPos pos = e.getPos();
-		for (ConversionDescription conversion : CONVERSIONS.getConversions()) {
-			if (conversion.matchesLiquid1(world.getBlockState(pos))) {
-				// Make sure block updating is liquid1
-				for (EnumFacing side1 : EnumFacing.VALUES) {
-					// Iterate through relevant sides
-					if (conversion.matchesDust(world.getBlockState(pos.offset(side1)))) {
-						for (EnumFacing side2 : EnumFacing.HORIZONTALS) {
-							// Iterate through the horizontal sides of the
-							// dust
-							// Check if liquid2 is present
-							if (conversion
-									.matchesLiquid2(world.getBlockState(e.getPos().offset(side1).offset(side2)))) {
-								// Set the block to result and play an effect
-								world.setBlockState(e.getPos().offset(side1),
-										PlaintextId.getBlockStateFrom(conversion.result), 2);
-								world.playSound((EntityPlayer) null, e.getPos(), SoundEvents.BLOCK_LAVA_EXTINGUISH,
-										SoundCategory.BLOCKS, 0.5F,
-										2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
-								// No need to keep checking this block
-								break;
-							}
-						}
-					}
+		IBlockState liquid1 = world.getBlockState(pos);
+		CONVERSIONS.stream().filter(conversion -> {
+			if(!conversion.matchesLiquid1(liquid1)){
+				return false;
+			}
+			BlockPos dustPos = pos.offset(EnumFacing.DOWN);
+			if(!conversion.matchesDust(world.getBlockState(dustPos))){
+				return false;
+			}
+			System.out.println(pos);
+			for (EnumFacing facing : EnumFacing.HORIZONTALS){
+				if(conversion.matchesLiquid2(world.getBlockState(dustPos.offset(facing)))){
+					return true;
 				}
 			}
-		}
+			return false;
+		}).findAny().ifPresent(conversion -> {
+			world.setBlockState(pos.offset(EnumFacing.DOWN), conversion.getResult(), 2);
+			world.playSound(
+				null,
+				pos,
+				SoundEvents.BLOCK_LAVA_EXTINGUISH,
+				SoundCategory.BLOCKS,
+				0.5F,
+				2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F
+			);
+		});
 	}
 }
