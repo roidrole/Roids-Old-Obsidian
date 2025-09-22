@@ -13,11 +13,14 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import us.timinc.jsonedoldobsidian.DescriptionLoader;
-import us.timinc.jsonedoldobsidian.ModInfo;
 import us.timinc.jsonedoldobsidian.description.ConversionDescription;
 import us.timinc.mcutil.PlaintextId;
 
-@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION)
+@Mod(
+    modid = Tags.MOD_ID,
+    name = Tags.MOD_NAME,
+    version = Tags.VERSION,
+)
 public class OldObsidian {
 	private static DescriptionLoader CONVERSIONS;
 
