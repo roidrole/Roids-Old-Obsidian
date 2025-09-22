@@ -7,6 +7,7 @@ import com.google.gson.stream.MalformedJsonException;
 import com.legobmw99.oldobsidian.mcutil.PlaintextId;
 import com.legobmw99.oldobsidian.parameters.CollectionParameter;
 import com.legobmw99.oldobsidian.parameters.IMatchingParameter;
+import com.legobmw99.oldobsidian.parameters.OredictParameter;
 import com.legobmw99.oldobsidian.parameters.RegexParameter;
 
 import java.io.IOException;
@@ -91,6 +92,9 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<ConversionDescription
 			}
 			case STRING:{
 				String parameter = in.nextString();
+				if(parameter.startsWith("ore:")){
+					return new OredictParameter(parameter.substring(4));
+				}
 				return new RegexParameter(parameter);
 			}
 		}

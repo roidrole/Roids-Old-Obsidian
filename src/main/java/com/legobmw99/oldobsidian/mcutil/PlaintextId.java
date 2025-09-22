@@ -2,8 +2,6 @@ package com.legobmw99.oldobsidian.mcutil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 /**
  * A util class for turning game objects into ID strings.
@@ -22,23 +20,6 @@ public class PlaintextId {
 	public static String getBlockId(IBlockState blockState) {
 		Block block = blockState.getBlock();
 		return block.getRegistryName().toString() + ":" + block.getMetaFromState(blockState);
-	}
-
-	/**
-	 * Creates an item stack from the given item ID.
-	 *
-	 * @param itemId
-	 *            The item ID.
-	 * @param count
-	 *            The number of items.
-	 * @return The item stack.
-	 */
-	public static ItemStack createItemStackFrom(String itemId, int count) {
-		String[] splitDropItemId = fixMetadata(itemId, IdType.OBJ).split(":");
-		ItemStack newItemStack = new ItemStack(Item.getByNameOrId(splitDropItemId[0] + ":" + splitDropItemId[1]),
-				count);
-		newItemStack.setItemDamage(Integer.parseInt(splitDropItemId[2]));
-		return newItemStack;
 	}
 
 	/**
