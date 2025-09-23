@@ -31,31 +31,15 @@ public class PlaintextId {
 	 */
 	@SuppressWarnings("deprecation")
 	public static IBlockState getBlockStateFrom(String blockId) {
-		blockId = fixMetadata(blockId, IdType.OBJ);
 		String[] splitIntoBlockId = blockId.split(":");
-		return Block.getBlockFromName(splitIntoBlockId[0] + ":" + splitIntoBlockId[1])
+		if(splitIntoBlockId.length == 2) {
+			return Block
+				.getBlockFromName(splitIntoBlockId[0] + ":" + splitIntoBlockId[1])
+				.getStateFromMeta(0);
+		} else {
+			return Block
+				.getBlockFromName(splitIntoBlockId[0] + ":" + splitIntoBlockId[1])
 				.getStateFromMeta(Integer.parseInt(splitIntoBlockId[2]));
-	}
-
-	public enum IdType {
-		CHECK(":*"),
-		OBJ(":0");
-
-		private final String suffix;
-
-		IdType(String suffix){
-			this.suffix = suffix;
 		}
-		public String getSuffix(){
-			return suffix;
-		}
-	}
-
-	public static String fixMetadata(String itemId, IdType idType) {
-		String[] splitMetadata = itemId.split(":");
-		if (splitMetadata.length == 2) {
-			return itemId+idType.getSuffix();
-		}
-		return itemId;
 	}
 }
