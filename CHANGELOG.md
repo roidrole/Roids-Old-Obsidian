@@ -1,12 +1,13 @@
 Notice : use keywords **added :**, **changed :**, **removed :** if > 2 entries. 
 See [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## Unreleased :
+## 2.0.0 :
 **Added:**
+- Hot reloading of json conversions
 
 **Changed:**
-- Code cleanup
-- Optimization
+- Full rewrite
+- Optimization (≈ 5 times faster)
 - OredictMatcher now matches based on picked blocked (middle mouse button) instead of registry names
 
 **Removed:**
