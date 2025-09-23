@@ -1,7 +1,6 @@
 package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -15,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,7 +35,7 @@ import java.util.stream.Collector;
     version = Tags.VERSION
 )
 public class OldObsidian {
-	private static Set<ConversionDescription> CONVERSIONS;
+	public static Set<ConversionDescription> CONVERSIONS;
 	public static Logger LOGGER;
 	public static BlockPos dustPos;
 
@@ -46,12 +46,14 @@ public class OldObsidian {
 		loadConversions();
 	}
 
+	@EventHandler
+	public void init(FMLInitializationEvent event){
+		loadConversions();
+	}
+
 	@SubscribeEvent
 	public void onNotify(NeighborNotifyEvent event) {
 		IBlockState liquid1 = event.getState();
-		if(!(liquid1.getBlock() instanceof BlockLiquid)){
-			return;
-		}
 		World world = event.getWorld();
 		BlockPos pos = event.getPos();
 		CONVERSIONS.stream().filter(conversion -> {
