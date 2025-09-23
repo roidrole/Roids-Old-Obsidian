@@ -1,7 +1,7 @@
-package com.legobmw99.oldobsidian.parameters;
+package com.legobmw99.oldobsidian.matchers;
 
 import net.minecraft.block.state.IBlockState;
 
-public interface IMatchingParameter {
+public interface IBlockStateMatcher {
 	boolean matches(IBlockState state);
 }

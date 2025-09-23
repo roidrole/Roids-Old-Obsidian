@@ -21,14 +21,4 @@ build
 eclipse
 run
 
-changelog.txt
-
-CREDITS.txt
-
-LICENSE-Paulscode IBXM Library.txt
-
-LICENSE-Paulscode SoundSystem CodecIBXM.txt
-
-LICENSE.txt
-
-README.txt
+!/run/oldobsidian

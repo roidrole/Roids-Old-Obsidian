@@ -1,4 +1,4 @@
-package com.legobmw99.oldobsidian.mcutil;
+package com.legobmw99.oldobsidian;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -38,20 +38,23 @@ public class PlaintextId {
 	}
 
 	public enum IdType {
-		CHECK, OBJ
+		CHECK(":*"),
+		OBJ(":0");
+
+		private final String suffix;
+
+		IdType(String suffix){
+			this.suffix = suffix;
+		}
+		public String getSuffix(){
+			return suffix;
+		}
 	}
 
 	public static String fixMetadata(String itemId, IdType idType) {
 		String[] splitMetadata = itemId.split(":");
 		if (splitMetadata.length == 2) {
-			switch (idType) {
-			case CHECK:
-				return itemId + ":*";
-			case OBJ:
-				return itemId + ":0";
-			default:
-				return itemId;
-			}
+			return itemId+idType.getSuffix();
 		}
 		return itemId;
 	}

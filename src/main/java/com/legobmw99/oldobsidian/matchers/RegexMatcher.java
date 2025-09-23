@@ -1,16 +1,15 @@
-package com.legobmw99.oldobsidian.parameters;
+package com.legobmw99.oldobsidian.matchers;
 
-import com.legobmw99.oldobsidian.mcutil.PlaintextId;
+import com.legobmw99.oldobsidian.PlaintextId;
 import net.minecraft.block.state.IBlockState;
 
 import java.util.regex.Pattern;
 
-public class RegexParameter implements IMatchingParameter{
+public class RegexMatcher implements IBlockStateMatcher {
 	public final Pattern recipeObject;
 
-	public RegexParameter(String recipeObj){
+	public RegexMatcher(String recipeObj){
 		recipeObj = recipeObj.replaceAll("\\*", ".*");
-		recipeObj = PlaintextId.fixMetadata(recipeObj, PlaintextId.IdType.CHECK);
 		this.recipeObject = Pattern.compile(recipeObj);
 	}
 

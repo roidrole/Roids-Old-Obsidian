@@ -4,11 +4,9 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
-import com.legobmw99.oldobsidian.mcutil.PlaintextId;
-import com.legobmw99.oldobsidian.parameters.CollectionParameter;
-import com.legobmw99.oldobsidian.parameters.IMatchingParameter;
-import com.legobmw99.oldobsidian.parameters.OredictParameter;
-import com.legobmw99.oldobsidian.parameters.RegexParameter;
+import com.legobmw99.oldobsidian.matchers.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -62,12 +60,12 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<ConversionDescription
 					output.dust = readParameter(in);
 					break;
 				}
-				case "checkDustPower": {
-					output.checkDustPower = in.nextBoolean();
-					break;
-				}
 				case "result": {
 					output.result = PlaintextId.getBlockStateFrom(in.nextString());
+					break;
+				}
+				case "checkDustPower":{
+					in.nextBoolean();
 					break;
 				}
 				default: throw new MalformedJsonException("Unrecognized JSON key. Accepted keys are : liquid1, liquids1, liquid2, liquids2, dust, dusts, checkDustPower, result");
@@ -79,23 +77,34 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<ConversionDescription
 		return output;
 	}
 
-	public static IMatchingParameter readParameter(JsonReader in) throws IOException {
+	public static IBlockStateMatcher readParameter(JsonReader in) throws IOException {
 		switch (in.peek()){
 			case BEGIN_ARRAY:{
 				in.beginArray();
-				Set<IMatchingParameter> dusts = new HashSet<>();
+				Set<IBlockStateMatcher> output = new HashSet<>();
 				while (in.hasNext()) {
-					dusts.add(new RegexParameter(in.nextString()));
+					output.add(readParameter(in));
 				}
 				in.endArray();
-				return new CollectionParameter(dusts);
+				return new CollectionMatcher(output);
 			}
 			case STRING:{
 				String parameter = in.nextString();
 				if(parameter.startsWith("ore:")){
-					return new OredictParameter(parameter.substring(4));
+					return new OredictMatcher(parameter.substring(4));
 				}
-				return new RegexParameter(parameter);
+				String[] splitParameter = parameter.split(":");
+				if(splitParameter.length > 1) {
+					ResourceLocation resLoc = new ResourceLocation(splitParameter[0], splitParameter[1]);
+					if (ForgeRegistries.BLOCKS.containsKey(resLoc)) {
+						if(splitParameter.length == 2) {
+							return new BlockMatcher(ForgeRegistries.BLOCKS.getValue(resLoc));
+						} else if (splitParameter.length == 3){
+							return new StateMatcher(ForgeRegistries.BLOCKS.getValue(resLoc).getStateFromMeta(Integer.parseInt(splitParameter[2])));
+						}
+					}
+					return new RegexMatcher(parameter);
+				}
 			}
 		}
 		throw new MalformedJsonException("Invalid parameter type");

@@ -43,6 +43,7 @@ public class OldObsidian {
 		LOGGER = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(this);
 
+		//TODO : only on the server, NeighborNotifyEvent isn't called on the client
 		ConversionTypeAdapter adapter = new ConversionTypeAdapter();
 		try {
 			CONVERSIONS = Files.walk(Paths.get("oldobsidian"))
@@ -83,7 +84,6 @@ public class OldObsidian {
 			if(!conversion.dust.matches(world.getBlockState(dustPos))){
 				return false;
 			}
-			System.out.println(pos);
 			for (EnumFacing facing : EnumFacing.HORIZONTALS){
 				if(conversion.liquid2.matches(world.getBlockState(dustPos.offset(facing)))){
 					return true;
@@ -151,6 +151,7 @@ public class OldObsidian {
 	10000 onNotify took 4522 ms
 	10000 onNotify took 869 ms
 	10000 onNotify took 631 ms
-	precompile regex :
+
+
 	 */
 }
