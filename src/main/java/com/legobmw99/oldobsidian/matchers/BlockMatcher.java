@@ -14,4 +14,9 @@ public class BlockMatcher implements IBlockStateMatcher{
 	public boolean matches(IBlockState state) {
 		return state.getBlock() == block;
 	}
+
+	@Override
+	public String toString(){
+		return "blockMatcher:"+block.toString();
+	}
 }

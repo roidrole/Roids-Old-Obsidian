@@ -22,4 +22,9 @@ public class OredictMatcher implements IBlockStateMatcher {
 			return false;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "oreDictMatcher:"+OreDictionary.getOreName(entryId);
+	}
 }

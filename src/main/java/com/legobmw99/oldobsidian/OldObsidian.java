@@ -1,6 +1,7 @@
 package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -25,10 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.AbstractCollection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collector;
 
 @Mod(
@@ -39,6 +37,7 @@ import java.util.stream.Collector;
 public class OldObsidian {
 	private static Set<ConversionDescription> CONVERSIONS;
 	public static Logger LOGGER;
+	public static BlockPos dustPos;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -48,16 +47,26 @@ public class OldObsidian {
 	}
 
 	@SubscribeEvent
-	public void onNotify(NeighborNotifyEvent e) {
-		World world = e.getWorld();
-		BlockPos pos = e.getPos();
-		IBlockState liquid1 = world.getBlockState(pos);
+	public void onNotify(NeighborNotifyEvent event) {
+		IBlockState liquid1 = event.getState();
+		if(!(liquid1.getBlock() instanceof BlockLiquid)){
+			return;
+		}
+		World world = event.getWorld();
+		BlockPos pos = event.getPos();
 		CONVERSIONS.stream().filter(conversion -> {
 			if(!conversion.liquid1.matches(liquid1)){
 				return false;
 			}
-			BlockPos dustPos = pos.offset(EnumFacing.DOWN);
-			if(!conversion.dust.matches(world.getBlockState(dustPos))){
+			boolean foundDust = false;
+			for(EnumFacing facing : event.getNotifiedSides()){
+				dustPos = pos.offset(facing);
+				if(conversion.dust.matches(world.getBlockState(dustPos))){
+					foundDust = true;
+					break;
+				}
+			}
+			if(!foundDust){
 				return false;
 			}
 			for (EnumFacing facing : EnumFacing.HORIZONTALS){
@@ -67,7 +76,7 @@ public class OldObsidian {
 			}
 			return false;
 		}).findAny().ifPresent(conversion -> {
-			world.setBlockState(pos.offset(EnumFacing.DOWN), conversion.result, 2);
+			world.setBlockState(dustPos, conversion.result, 2);
 			world.playSound(
 				null,
 				pos,
