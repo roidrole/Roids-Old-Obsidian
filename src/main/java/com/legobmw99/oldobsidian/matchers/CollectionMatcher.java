@@ -20,4 +20,20 @@ public class CollectionMatcher implements IBlockStateMatcher {
 		}
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder("CollectionMatcher: [");
+		boolean first = true;
+		for (IBlockStateMatcher matcher : internal){
+			if(first){
+				first = false;
+			} else {
+				output.append(", ");
+			}
+			output.append(matcher.toString());
+		}
+		output.append(']');
+		return output.toString();
+	}
 }

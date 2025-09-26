@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class OredictMatcher implements IBlockStateMatcher {
-	int entryId;
+public class OredictMatcher extends SimpleMatcher {
+	public int entryId;
 
 	public OredictMatcher(String entry){
 		entryId = OreDictionary.getOreID(entry);
@@ -24,7 +24,7 @@ public class OredictMatcher implements IBlockStateMatcher {
 	}
 
 	@Override
-	public String toString() {
-		return "oreDictMatcher:"+OreDictionary.getOreName(entryId);
+	public Object getInternal() {
+		return entryId;
 	}
 }
