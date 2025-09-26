@@ -1,15 +1,9 @@
 package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,8 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Mod(
     modid = Tags.MOD_ID,
@@ -35,15 +30,12 @@ import java.util.stream.Collector;
     version = Tags.VERSION
 )
 public class OldObsidian {
-	public static Set<ConversionDescription> CONVERSIONS;
 	public static Logger LOGGER;
-	public static BlockPos dustPos;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		LOGGER = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(this);
-		loadConversions();
 	}
 
 	@EventHandler
@@ -53,41 +45,7 @@ public class OldObsidian {
 
 	@SubscribeEvent
 	public void onNotify(NeighborNotifyEvent event) {
-		IBlockState liquid1 = event.getState();
-		World world = event.getWorld();
-		BlockPos pos = event.getPos();
-		CONVERSIONS.stream().filter(conversion -> {
-			if(!conversion.liquid1.matches(liquid1)){
-				return false;
-			}
-			boolean foundDust = false;
-			for(EnumFacing facing : event.getNotifiedSides()){
-				dustPos = pos.offset(facing);
-				if(conversion.dust.matches(world.getBlockState(dustPos))){
-					foundDust = true;
-					break;
-				}
-			}
-			if(!foundDust){
-				return false;
-			}
-			for (EnumFacing facing : EnumFacing.HORIZONTALS){
-				if(conversion.liquid2.matches(world.getBlockState(dustPos.offset(facing)))){
-					return true;
-				}
-			}
-			return false;
-		}).findAny().ifPresent(conversion -> {
-			world.setBlockState(dustPos, conversion.result, 2);
-			world.playSound(
-				null,
-				pos,
-				SoundEvents.BLOCK_LAVA_EXTINGUISH,
-				SoundCategory.BLOCKS,
-				0.5F,
-				2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F
-			);
-		});
+		ConversionsSet.INSTANCE.handle(event);
 	}
 
 	@EventHandler
@@ -110,29 +68,21 @@ public class OldObsidian {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void loadConversions(){
 		ConversionTypeAdapter adapter = new ConversionTypeAdapter();
-		try {
-			CONVERSIONS = Files.walk(Paths.get("oldobsidian"))
-				.map(Path::toFile)
-				.filter(File::isFile)
-				.map(file -> {
-					try {
-						return adapter.read(new JsonReader(new FileReader(file)));
-					} catch (Exception e) {
-						OldObsidian.LOGGER.warn("An error has occured when loading json file: {}", file, e);
-					}
-					return Collections.EMPTY_SET;
-				})
-				.collect(Collector.of(
-					HashSet::new,
-					AbstractCollection::addAll,
-					(left, right) -> {
-						right.addAll(left);
-						return right;
-					}
-				))
-			;
+		try (Stream<Path> paths = Files.walk(Paths.get("oldobsidian"))){paths
+			.map(Path::toFile)
+			.filter(File::isFile)
+			.map(file -> {
+				try {
+					return adapter.read(new JsonReader(new FileReader(file)));
+				} catch (Exception e) {
+					OldObsidian.LOGGER.warn("An error has occured when loading json file: {}", file, e);
+				}
+				return (Set<ConversionDescription>)Collections.EMPTY_SET;
+			})
+			.forEach(set -> ConversionsSet.INSTANCE.addAll(set));
 		} catch (IOException e) {
 			OldObsidian.LOGGER.error("An unexpected error has occured when loading json files", e);
 		}
