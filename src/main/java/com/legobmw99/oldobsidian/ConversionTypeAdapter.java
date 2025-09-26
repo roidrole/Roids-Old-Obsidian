@@ -106,6 +106,12 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<ConversionDescription
 					return new RegexMatcher(parameter);
 				}
 			}
+			case BOOLEAN:{
+				if(in.nextBoolean()){
+					return TrueMatcher.INSTANCE;
+				}
+				throw new MalformedJsonException("false is not a valid parameter type");
+			}
 		}
 		throw new MalformedJsonException("Invalid parameter type");
 	}
