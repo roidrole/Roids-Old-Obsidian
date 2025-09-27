@@ -60,29 +60,33 @@ public class ConversionsSet {
 		}
 	}
 
-	public void add(IConversion description){
-		if(description.getLiquid1() instanceof CollectionMatcher){
-			for (IBlockStateMatcher matcher: ((CollectionMatcher) description.getLiquid1()).internal){
-				put(matcher, description);
+	public void add(IConversion conversion){
+		if(!conversion.validate()){
+			OldObsidian.LOGGER.warn("Trying to register an invalid conversion: {}", conversion.toString());
+			return;
+		}
+		if(conversion.getLiquid1() instanceof CollectionMatcher){
+			for (IBlockStateMatcher matcher: ((CollectionMatcher) conversion.getLiquid1()).internal){
+				put(matcher, conversion);
 			}
 		} else {
-			put(description.getLiquid1(), description);
+			put(conversion.getLiquid1(), conversion);
 		}
 	}
 
 	//FindMap, the return? It's just hard getting the key of an unknown type
 	//Could also replace that with a static in the class itself, maybe. Put that computeIfAbsent in SimpleMatcher, even?
-	public void put(IBlockStateMatcher matcher, IConversion description){
+	public void put(IBlockStateMatcher matcher, IConversion conversion){
 		if(matcher instanceof SimpleMatcher){
 			if(matcher instanceof StateMatcher){
-				stateMatchers.computeIfAbsent(((StateMatcher) matcher).state, key -> new HashSet<>()).add(description);
+				stateMatchers.computeIfAbsent(((StateMatcher) matcher).state, key -> new HashSet<>()).add(conversion);
 			} else if(matcher instanceof BlockMatcher){
-				blockMatchers.computeIfAbsent(((BlockMatcher) matcher).block, key -> new HashSet<>()).add(description);
+				blockMatchers.computeIfAbsent(((BlockMatcher) matcher).block, key -> new HashSet<>()).add(conversion);
 			} else if(matcher instanceof OredictMatcher) {
-				oreMatchers.computeIfAbsent(((OredictMatcher) matcher).entryId, key -> new HashSet<>()).add(description);
+				oreMatchers.computeIfAbsent(((OredictMatcher) matcher).entryId, key -> new HashSet<>()).add(conversion);
 			}
 		} else {
-			miscMatchers.add(description);
+			miscMatchers.add(conversion);
 		}
 	}
 

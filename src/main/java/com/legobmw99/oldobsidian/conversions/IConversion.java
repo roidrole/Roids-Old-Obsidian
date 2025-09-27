@@ -13,4 +13,6 @@ public interface IConversion {
 	//To circumvent this, use a matcher that is always true and check however you want here.
 	//Be wary, however, we are listening to every block update, so exit-early whenever possible
 	boolean checkAndPerformConversion(BlockEvent.NeighborNotifyEvent event);
+
+	boolean validate();
 }

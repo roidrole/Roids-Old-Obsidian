@@ -53,4 +53,22 @@ public class ConversionDescription implements IConversion{
 		}
 		return false;
 	}
+
+	@Override
+	public boolean validate(){
+		return liquid1 != null && liquid2 != null && dust != null && result != null;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder("ConversionDescription: {\n");
+		out.append("liquid1:");
+		out.append(liquid1);
+		out.append("\ndust:");
+		out.append(dust);
+		out.append("\nliquid2:");
+		out.append(liquid2);
+		out.append("\n}");
+		return out.toString();
+	}
 }

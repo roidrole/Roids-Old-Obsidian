@@ -73,9 +73,6 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<IConversion>> {
 				default: throw new MalformedJsonException("Unrecognized JSON key. Accepted keys are : liquid1, liquids1, liquid2, liquids2, dust, dusts, checkDustPower, result");
 			}
 		}
-		if(output.result == null || output.liquid1 == null || output.liquid2 == null || output.dust == null){
-			throw new MalformedJsonException("Every entry of a conversion must contain the following keys : result, liquid1, liquid2, dust");
-		}
 		return output;
 	}
 
