@@ -1,6 +1,7 @@
 package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
+import com.legobmw99.oldobsidian.conversions.IConversion;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -80,7 +81,7 @@ public class OldObsidian {
 				} catch (Exception e) {
 					OldObsidian.LOGGER.warn("An error has occured when loading json file: {}", file, e);
 				}
-				return (Set<ConversionDescription>)Collections.EMPTY_SET;
+				return (Set<IConversion>)Collections.EMPTY_SET;
 			})
 			.forEach(set -> ConversionsSet.INSTANCE.addAll(set));
 		} catch (IOException e) {

@@ -1,4 +1,4 @@
-package com.legobmw99.oldobsidian;
+package com.legobmw99.oldobsidian.conversions;
 
 import com.legobmw99.oldobsidian.matchers.IBlockStateMatcher;
 import net.minecraft.block.state.IBlockState;
@@ -9,18 +9,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 
-public class ConversionDescription {
-	//If extending the class, you only need liquid1 to be set.
-	//The other parameters are public only so I can create them via Json easier.
-	//They are still used in the default checkAndPerformConversion, however.
+public class ConversionDescription implements IConversion{
 	public IBlockStateMatcher liquid1;
 	public IBlockStateMatcher liquid2;
 	public IBlockStateMatcher dust;
 	public IBlockState result;
 
-	//If extending the class, you don't need to match liquid1, as that one is compared in ConversionSer already with hashing.
-	//To circumvent this, use a matcher that is always true and check however you want here.
-	//Be wary, however, we are listening to every block update, so exit-early whenever possible
+	@Override
+	public IBlockStateMatcher getLiquid1(){
+		return liquid1;
+	}
+
+	@Override
 	public boolean checkAndPerformConversion(BlockEvent.NeighborNotifyEvent event){
 		World world = event.getWorld();
 		BlockPos pos = event.getPos();

@@ -1,5 +1,6 @@
 package com.legobmw99.oldobsidian;
 
+import com.legobmw99.oldobsidian.conversions.IConversion;
 import com.legobmw99.oldobsidian.matchers.*;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.Block;
@@ -10,27 +11,27 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
 
-//A weird mix between a Set<Conversion> and a Map<Object, Set<ConversionDescription>>
-//Is used to have hashing for ConversionDescription liquid1 matching
+//A weird mix between a Set<Conversion> and a Map<Object, Set<IConversion>>
+//Is used to have hashing for IConversion liquid1 matching
 //Also hosts event handling because it's easier
 public class ConversionsSet {
 	public static ConversionsSet INSTANCE = new ConversionsSet();
-	public Map<IBlockState, Set<ConversionDescription>> stateMatchers = new HashMap<>();
-	public Map<Block, Set<ConversionDescription>> blockMatchers = new HashMap<>();
-	public Map<Integer, Set<ConversionDescription>> oreMatchers = new Int2ObjectOpenHashMap<>();
-	public Set<ConversionDescription> miscMatchers = new HashSet<>();
+	public Map<IBlockState, Set<IConversion>> stateMatchers = new HashMap<>();
+	public Map<Block, Set<IConversion>> blockMatchers = new HashMap<>();
+	public Map<Integer, Set<IConversion>> oreMatchers = new Int2ObjectOpenHashMap<>();
+	public Set<IConversion> miscMatchers = new HashSet<>();
 	@SuppressWarnings("unchecked")
-	public static Set<ConversionDescription> EMPTY_SET = (Set<ConversionDescription>)Collections.EMPTY_SET;
+	public static Set<IConversion> EMPTY_SET = (Set<IConversion>)Collections.EMPTY_SET;
 
 
 	public void handle(BlockEvent.NeighborNotifyEvent event){
 		IBlockState state = event.getState();
-		for (ConversionDescription desc : stateMatchers.getOrDefault(state, EMPTY_SET)){
+		for (IConversion desc : stateMatchers.getOrDefault(state, EMPTY_SET)){
 			if(desc.checkAndPerformConversion(event)){
 				return;
 			}
 		}
-		for (ConversionDescription desc : blockMatchers.getOrDefault(state.getBlock(), EMPTY_SET)){
+		for (IConversion desc : blockMatchers.getOrDefault(state.getBlock(), EMPTY_SET)){
 			if(desc.checkAndPerformConversion(event)){
 				return;
 			}
@@ -41,7 +42,7 @@ public class ConversionsSet {
 			if(!stack.isEmpty()) {
 				int[] oreIDs = OreDictionary.getOreIDs(stack);
 				for (int id : oreIDs) {
-					for (ConversionDescription desc : oreMatchers.getOrDefault(id, EMPTY_SET)){
+					for (IConversion desc : oreMatchers.getOrDefault(id, EMPTY_SET)){
 						if(desc.checkAndPerformConversion(event)){
 							return;
 						}
@@ -50,8 +51,8 @@ public class ConversionsSet {
 			}
 		}
 
-		for(ConversionDescription desc : miscMatchers){
-			if(desc.liquid1.matches(state)) {
+		for(IConversion desc : miscMatchers){
+			if(desc.getLiquid1().matches(state)) {
 				if(desc.checkAndPerformConversion(event)){
 					return;
 				}
@@ -59,19 +60,19 @@ public class ConversionsSet {
 		}
 	}
 
-	public void add(ConversionDescription description){
-		if(description.liquid1 instanceof CollectionMatcher){
-			for (IBlockStateMatcher matcher: ((CollectionMatcher) description.liquid1).internal){
+	public void add(IConversion description){
+		if(description.getLiquid1() instanceof CollectionMatcher){
+			for (IBlockStateMatcher matcher: ((CollectionMatcher) description.getLiquid1()).internal){
 				put(matcher, description);
 			}
 		} else {
-			put(description.liquid1, description);
+			put(description.getLiquid1(), description);
 		}
 	}
 
 	//FindMap, the return? It's just hard getting the key of an unknown type
 	//Could also replace that with a static in the class itself, maybe. Put that computeIfAbsent in SimpleMatcher, even?
-	public void put(IBlockStateMatcher matcher, ConversionDescription description){
+	public void put(IBlockStateMatcher matcher, IConversion description){
 		if(matcher instanceof SimpleMatcher){
 			if(matcher instanceof StateMatcher){
 				stateMatchers.computeIfAbsent(((StateMatcher) matcher).state, key -> new HashSet<>()).add(description);
@@ -85,8 +86,8 @@ public class ConversionsSet {
 		}
 	}
 
-	public void addAll(Set<ConversionDescription> descriptionSet){
-		for(ConversionDescription description : descriptionSet){
+	public void addAll(Collection<IConversion> descriptionSet){
+		for(IConversion description : descriptionSet){
 			this.add(description);
 		}
 	}

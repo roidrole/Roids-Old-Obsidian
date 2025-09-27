@@ -4,6 +4,8 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
+import com.legobmw99.oldobsidian.conversions.ConversionDescription;
+import com.legobmw99.oldobsidian.conversions.IConversion;
 import com.legobmw99.oldobsidian.matchers.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -13,15 +15,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConversionTypeAdapter extends TypeAdapter<Set<ConversionDescription>> {
+public class ConversionTypeAdapter extends TypeAdapter<Set<IConversion>> {
 	@Override
-	public void write(JsonWriter out, Set<ConversionDescription> value) {
+	public void write(JsonWriter out, Set<IConversion> value) {
 		throw new UnsupportedOperationException("Conversion can't be written");
 	}
 
 	@Override
-	public Set<ConversionDescription> read(JsonReader in) throws IOException {
-		Set<ConversionDescription> output;
+	public Set<IConversion> read(JsonReader in) throws IOException {
+		Set<IConversion> output;
 		switch(in.peek()){
 			case BEGIN_ARRAY: {
 				in.beginArray();
