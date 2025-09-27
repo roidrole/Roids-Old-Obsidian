@@ -7,7 +7,7 @@ See [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 **Changed:**
 - Full rewrite
-- Optimization (≈ 5 times faster)
+- Optimization (≳ 5 times faster)
 - OredictMatcher now matches based on picked blocked (middle mouse button) instead of registry names
 - Specifically listens to NeighbourNotifyEvent fired by BlockLiquid (so no placing blocks between liquids)
 
