@@ -14,5 +14,6 @@ public interface IConversion {
 	//Be wary, however, we are listening to every block update, so exit-early whenever possible
 	boolean checkAndPerformConversion(BlockEvent.NeighborNotifyEvent event);
 
+	//If this returns false, the addition will fail and error
 	boolean validate();
 }
