@@ -1,8 +1,6 @@
 package com.legobmw99.oldobsidian;
 
-import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
 import com.legobmw99.oldobsidian.conversions.ConversionDescription;
 import com.legobmw99.oldobsidian.conversions.IConversion;
@@ -11,35 +9,27 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class ConversionTypeAdapter extends TypeAdapter<Set<IConversion>> {
-	@Override
-	public void write(JsonWriter out, Set<IConversion> value) {
-		throw new UnsupportedOperationException("Conversion can't be written");
-	}
+public class ConversionParser {
+	public static Collection<IConversion> miscMatchers = new ArrayList<>();
 
-	@Override
-	public Set<IConversion> read(JsonReader in) throws IOException {
-		Set<IConversion> output;
+	public void read(JsonReader in) throws IOException {
 		switch(in.peek()){
 			case BEGIN_ARRAY: {
 				in.beginArray();
-				output = new HashSet<>();
 				while(in.hasNext()){
-					output.add(readObject(in));
+					add(readObject(in));
 				}
 				break;
 			}
 			case BEGIN_OBJECT: {
-				output = Collections.singleton(readObject(in));
+				add(readObject(in));
 				break;
 			}
 			default: throw new MalformedJsonException("Conversion Json files must be an object or an array of objects");
 		}
-		return output;
 	}
 
 	public static ConversionDescription readObject(JsonReader in) throws IOException {
@@ -80,7 +70,7 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<IConversion>> {
 		switch (in.peek()){
 			case BEGIN_ARRAY:{
 				in.beginArray();
-				Set<IBlockStateMatcher> output = new HashSet<>();
+				Collection<IBlockStateMatcher> output = new ArrayList<>();
 				while (in.hasNext()) {
 					output.add(readParameter(in));
 				}
@@ -113,5 +103,27 @@ public class ConversionTypeAdapter extends TypeAdapter<Set<IConversion>> {
 			}
 		}
 		throw new MalformedJsonException("Invalid parameter type");
+	}
+
+	public void add(IConversion conversion){
+		if(!conversion.validate()){
+			OldObsidian.LOGGER.warn("Trying to register an invalid conversion: {}", conversion.toString());
+			return;
+		}
+		if(conversion.getLiquid1() instanceof CollectionMatcher){
+			for (IBlockStateMatcher matcher: ((CollectionMatcher) conversion.getLiquid1()).internal){
+				put(matcher, conversion);
+			}
+		} else {
+			put(conversion.getLiquid1(), conversion);
+		}
+	}
+
+	public void put(IBlockStateMatcher matcher, IConversion conversion){
+		if(matcher instanceof SimpleMatcher){
+			((SimpleMatcher<?>) matcher).addToMap(conversion);
+		} else {
+			miscMatchers.add(conversion);
+		}
 	}
 }

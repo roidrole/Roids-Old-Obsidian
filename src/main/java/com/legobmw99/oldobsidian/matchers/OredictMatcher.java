@@ -1,12 +1,18 @@
 package com.legobmw99.oldobsidian.matchers;
 
+import com.legobmw99.oldobsidian.conversions.IConversion;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class OredictMatcher extends SimpleMatcher {
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public class OredictMatcher extends SimpleMatcher<Integer> {
 	public int entryId;
+	public static Map<Integer, Collection<IConversion>> oreMatchers = new HashMap<>();
 
 	public OredictMatcher(String entry){
 		entryId = OreDictionary.getOreID(entry);
@@ -24,7 +30,12 @@ public class OredictMatcher extends SimpleMatcher {
 	}
 
 	@Override
-	public Object getInternal() {
+	public Integer getInternal() {
 		return entryId;
+	}
+
+	@Override
+	public Map<Integer, Collection<IConversion>> getMap() {
+		return oreMatchers;
 	}
 }

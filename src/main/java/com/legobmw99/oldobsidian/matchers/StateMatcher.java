@@ -1,9 +1,15 @@
 package com.legobmw99.oldobsidian.matchers;
 
+import com.legobmw99.oldobsidian.conversions.IConversion;
 import net.minecraft.block.state.IBlockState;
 
-public class StateMatcher extends SimpleMatcher {
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public class StateMatcher extends SimpleMatcher<IBlockState> {
 	public IBlockState state;
+	public static Map<IBlockState, Collection<IConversion>> stateMatchers = new HashMap<>();
 
 	public StateMatcher(IBlockState state){
 		this.state = state;
@@ -15,7 +21,12 @@ public class StateMatcher extends SimpleMatcher {
 	}
 
 	@Override
-	public Object getInternal() {
+	public IBlockState getInternal() {
 		return state;
+	}
+
+	@Override
+	public Map<IBlockState, Collection<IConversion>> getMap() {
+		return stateMatchers;
 	}
 }

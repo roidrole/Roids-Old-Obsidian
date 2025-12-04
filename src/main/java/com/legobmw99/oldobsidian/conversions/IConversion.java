@@ -9,11 +9,11 @@ public interface IConversion {
 	//Do keep in mind that you will then be listening to BlockEvent.NeighborNotifyEvent, with everything that implies for performance.
 	IBlockStateMatcher getLiquid1();
 
-	//If extending the class, you don't need to match liquid1, as that one is compared in ConversionSer already with hashing.
+	//If extending the class, you don't need to match liquid1, as that one is compared in ConversionSet already with hashing.
 	//To circumvent this, use a matcher that is always true and check however you want here.
 	//Be wary, however, we are listening to every block update, so exit-early whenever possible
 	boolean checkAndPerformConversion(BlockEvent.NeighborNotifyEvent event);
 
-	//If this returns false, the addition will fail and error
+	//If this returns false, the addition will fail and log a warning
 	boolean validate();
 }

@@ -2,8 +2,10 @@ package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
 import com.legobmw99.oldobsidian.conversions.IConversion;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
@@ -13,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -21,9 +24,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import java.util.stream.Stream;
+
+import static com.legobmw99.oldobsidian.matchers.BlockMatcher.blockMatchers;
+import static com.legobmw99.oldobsidian.matchers.OredictMatcher.oreMatchers;
+import static com.legobmw99.oldobsidian.matchers.StateMatcher.stateMatchers;
 
 @Mod(
     modid = Tags.MOD_ID,
@@ -32,6 +40,8 @@ import java.util.stream.Stream;
 )
 public class OldObsidian {
 	public static Logger LOGGER;
+	public static Collection<IConversion> EMPTY = Collections.emptyList();
+	public static Collection<IConversion> miscMatchers = new ArrayList<>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -46,7 +56,40 @@ public class OldObsidian {
 
 	@SubscribeEvent
 	public void onNotify(NeighborNotifyEvent event) {
-		ConversionsSet.INSTANCE.handle(event);
+		IBlockState state = event.getState();
+		for (IConversion desc : stateMatchers.getOrDefault(state, EMPTY)){
+			if(desc.checkAndPerformConversion(event)){
+				return;
+			}
+		}
+		for (IConversion desc : blockMatchers.getOrDefault(state.getBlock(), EMPTY)){
+			if(desc.checkAndPerformConversion(event)){
+				return;
+			}
+		}
+
+		if(!oreMatchers.isEmpty()) {
+			//Consider adding to stateMatchers on match/non-match
+			ItemStack stack = state.getBlock().getPickBlock(state, null, null, null, null);
+			if(!stack.isEmpty()) {
+				int[] oreIDs = OreDictionary.getOreIDs(stack);
+				for (int id : oreIDs) {
+					for (IConversion desc : oreMatchers.getOrDefault(id, EMPTY)){
+						if(desc.checkAndPerformConversion(event)){
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		for(IConversion desc : miscMatchers){
+			if(desc.getLiquid1().matches(state)) {
+				if(desc.checkAndPerformConversion(event)){
+					return;
+				}
+			}
+		}
 	}
 
 	@EventHandler
@@ -69,21 +112,18 @@ public class OldObsidian {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void loadConversions(){
-		ConversionTypeAdapter adapter = new ConversionTypeAdapter();
+		ConversionParser parser = new ConversionParser();
 		try (Stream<Path> paths = Files.walk(Paths.get("oldobsidian"))){paths
 			.map(Path::toFile)
 			.filter(File::isFile)
-			.map(file -> {
+			.forEach(file -> {
 				try {
-					return adapter.read(new JsonReader(new FileReader(file)));
+					parser.read(new JsonReader(new FileReader(file)));
 				} catch (Exception e) {
 					OldObsidian.LOGGER.warn("An error has occured when loading json file: {}", file, e);
 				}
-				return (Set<IConversion>)Collections.EMPTY_SET;
-			})
-			.forEach(set -> ConversionsSet.INSTANCE.addAll(set));
+			});
 		} catch (IOException e) {
 			OldObsidian.LOGGER.error("An unexpected error has occured when loading json files", e);
 		}
