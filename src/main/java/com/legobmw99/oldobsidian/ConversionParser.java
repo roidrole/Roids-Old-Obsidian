@@ -92,6 +92,14 @@ public class ConversionParser {
 							return new StateMatcher(ForgeRegistries.BLOCKS.getValue(resLoc).getStateFromMeta(Integer.parseInt(splitParameter[2])));
 						}
 					}
+					//If no special character apart from : and _, log a warning
+					if(parameter.chars().allMatch(i ->
+						(i == 58 || i == 95) //The ':' and '_' char
+					 || (i > 64 && i < 91)  // lowercase ASCII
+					 || (i > 96 && i < 123)) // uppercase ASCII
+					){
+						OldObsidian.LOGGER.warn("{} is not a valid block, using RegEx matching. From file: {}", parameter, in.toString());
+					}
 					return new RegexMatcher(parameter);
 				}
 			}
