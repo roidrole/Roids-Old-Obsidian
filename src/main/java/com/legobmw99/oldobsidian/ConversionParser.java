@@ -15,6 +15,9 @@ import java.util.Collection;
 public class ConversionParser {
 	public static Collection<IConversion> miscMatchers = new ArrayList<>();
 
+	//Shared between all matchers to avoid unnecessary object creation and growth
+	public ArrayList<IBlockStateMatcher> collectionMatcherList = new ArrayList<>();
+
 	public void read(JsonReader in) throws IOException {
 		switch(in.peek()){
 			case BEGIN_ARRAY: {
@@ -32,7 +35,7 @@ public class ConversionParser {
 		}
 	}
 
-	public static ConversionDescription readObject(JsonReader in) throws IOException {
+	public ConversionDescription readObject(JsonReader in) throws IOException {
 		in.beginObject();
 		ConversionDescription output = new ConversionDescription();
 		while(in.hasNext()) {
@@ -66,16 +69,18 @@ public class ConversionParser {
 		return output;
 	}
 
-	public static IBlockStateMatcher readParameter(JsonReader in) throws IOException {
+	@SuppressWarnings("unchecked")
+	public IBlockStateMatcher readParameter(JsonReader in) throws IOException {
 		switch (in.peek()){
 			case BEGIN_ARRAY:{
 				in.beginArray();
-				Collection<IBlockStateMatcher> output = new ArrayList<>();
+				collectionMatcherList.clear();
 				while (in.hasNext()) {
-					output.add(readParameter(in));
+					collectionMatcherList.add(readParameter(in));
 				}
 				in.endArray();
-				return new CollectionMatcher(output);
+				//clone on ArrayList returns an ArrayList whose capacity = size
+				return new CollectionMatcher((Collection<IBlockStateMatcher>) collectionMatcherList.clone());
 			}
 			case STRING:{
 				String parameter = in.nextString();

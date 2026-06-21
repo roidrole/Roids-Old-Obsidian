@@ -1,5 +1,7 @@
-Notice : use keywords **added :**, **changed :**, **removed :** if > 2 entries. 
-See [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+## Unreleased :
+- **Added** a warning on using a RegEx matcher without special characters
+- Optimize away temporary collections
+- Optimize memory usage of CollectionMatcher
 
 ## 2.0.0 :
 **Added:**
