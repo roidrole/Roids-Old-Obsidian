@@ -1,5 +1,7 @@
 ## Unreleased :
-**Added** a warning on using a RegEx matcher without special characters
+**Added** 
+- A warning on using a RegEx matcher without special characters
+- CraftTweaker API (only has JSON and custom matchers)
 
 **Changed:**
 - oldobsidian folder will be created if it doesn't exist already

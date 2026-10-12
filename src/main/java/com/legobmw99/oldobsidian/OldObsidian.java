@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Logger;
+import youyihj.zenutils.api.reload.ScriptReloadEvent;
 
 import java.io.File;
 import java.io.FileReader;
@@ -92,6 +93,11 @@ public class OldObsidian {
 		}
 	}
 
+	@SubscribeEvent
+	public void onRecipeReload(ScriptReloadEvent.Pre event){
+		OldObsidian.loadConversions();
+	}
+
 	@EventHandler
 	public void onServerStart(FMLServerStartingEvent event){
 		event.registerServerCommand(new CommandBase() {
@@ -113,6 +119,7 @@ public class OldObsidian {
 	}
 
 	public static void loadConversions(){
+		ConversionParser.clear();
 		ConversionParser parser = new ConversionParser();
 		Path path = Paths.get("oldobsidian");
 		path.toFile().mkdir();

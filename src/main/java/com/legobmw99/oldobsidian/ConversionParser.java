@@ -143,4 +143,11 @@ public class ConversionParser {
 			miscMatchers.add(conversion);
 		}
 	}
+
+	public static void clear(){
+		BlockMatcher.blockMatchers.clear();
+		OredictMatcher.oreMatchers.clear();
+		StateMatcher.stateMatchers.clear();
+		miscMatchers.clear();
+	}
 }

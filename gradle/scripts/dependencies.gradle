@@ -38,9 +38,11 @@ dependencies {
     runtimeOnly 'mezz:jei:4.29.7'
     runtimeOnly 'curse.maven:nbt-tooltip-274816:2567902'
 
-    runtimeOnly('com.cleanroommc:groovyscript:1.2.5'){
-        transitive = false
-    }
+    compileOnly 'curse.maven:crafttweaker-239197:8051578'
+    compileOnly 'curse.maven:zenutil-401178:9057336'
+    runtimeOnly 'curse.maven:crafttweaker-239197:8051578'
+    runtimeOnly 'zone.rong:mixinbooter:11.7'
+    runtimeOnly 'curse.maven:zenutil-401178:9057336'
 
 
 
