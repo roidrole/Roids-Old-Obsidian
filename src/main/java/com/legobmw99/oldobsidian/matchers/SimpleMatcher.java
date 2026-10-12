@@ -2,9 +2,7 @@ package com.legobmw99.oldobsidian.matchers;
 
 import com.legobmw99.oldobsidian.conversions.IConversion;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 // Matcher only used for hashing. Do not extend unless you know what you are doing
 public abstract class SimpleMatcher<T> implements IBlockStateMatcher {
@@ -13,10 +11,22 @@ public abstract class SimpleMatcher<T> implements IBlockStateMatcher {
 	public abstract Map<T, Collection<IConversion>> getMap();
 
 	public void addToMap(IConversion conversion){
-		this.getMap().computeIfAbsent(
+		this.getMap().compute(
 			this.getInternal(),
-			key -> new ArrayList<>(1)
-		).add(conversion);
+			(key, oldValue) -> {
+				if(oldValue == null){
+					return Collections.singletonList(conversion);
+				} else if (oldValue.size() == 1){
+					List<IConversion> list = new ArrayList<>(2);
+					list.add(oldValue.iterator().next());
+					list.add(conversion);
+					return list;
+				} else {
+					oldValue.add(conversion);
+					return oldValue;
+				}
+			}
+		);
 	}
 
 	@Override

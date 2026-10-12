@@ -2,6 +2,7 @@
 - **Added** a warning on using a RegEx matcher without special characters
 - Optimize away temporary collections
 - Optimize memory usage of CollectionMatcher
+- Optimize memory usage in the case of a single conversion having this fluid1
 
 ## 2.0.0 :
 **Added:**
