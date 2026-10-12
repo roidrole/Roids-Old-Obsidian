@@ -2,6 +2,7 @@ package com.legobmw99.oldobsidian;
 
 import com.google.gson.stream.JsonReader;
 import com.legobmw99.oldobsidian.conversions.IConversion;
+import com.legobmw99.oldobsidian.crafttweaker.ScriptReloadListener;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -9,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -17,7 +19,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Logger;
-import youyihj.zenutils.api.reload.ScriptReloadEvent;
 
 import java.io.File;
 import java.io.FileReader;
@@ -48,6 +49,9 @@ public class OldObsidian {
 	public void preInit(FMLPreInitializationEvent event) {
 		LOGGER = event.getModLog();
 		MinecraftForge.EVENT_BUS.register(this);
+		if(Loader.isModLoaded("zenutils")) {
+			MinecraftForge.EVENT_BUS.register(ScriptReloadListener.class);
+		}
 	}
 
 	@EventHandler
@@ -91,11 +95,6 @@ public class OldObsidian {
 				}
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public void onRecipeReload(ScriptReloadEvent.Pre event){
-		OldObsidian.loadConversions();
 	}
 
 	@EventHandler
