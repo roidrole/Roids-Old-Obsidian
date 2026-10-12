@@ -1,5 +1,8 @@
 ## Unreleased :
-- **Added** a warning on using a RegEx matcher without special characters
+**Added** a warning on using a RegEx matcher without special characters
+
+**Changed:**
+- oldobsidian folder will be created if it doesn't exist already
 - Optimize away temporary collections
 - Optimize memory usage of CollectionMatcher
 - Optimize memory usage in the case of a single conversion having this fluid1

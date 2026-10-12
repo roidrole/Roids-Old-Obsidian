@@ -114,7 +114,9 @@ public class OldObsidian {
 
 	public static void loadConversions(){
 		ConversionParser parser = new ConversionParser();
-		try (Stream<Path> paths = Files.walk(Paths.get("oldobsidian"))){paths
+		Path path = Paths.get("oldobsidian");
+		path.toFile().mkdir();
+		try (Stream<Path> paths = Files.walk(path)){paths
 			.map(Path::toFile)
 			.filter(File::isFile)
 			.forEach(file -> {
