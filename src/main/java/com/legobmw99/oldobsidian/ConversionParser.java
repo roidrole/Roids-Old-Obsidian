@@ -5,6 +5,7 @@ import com.google.gson.stream.MalformedJsonException;
 import com.legobmw99.oldobsidian.conversions.ConversionDescription;
 import com.legobmw99.oldobsidian.conversions.IConversion;
 import com.legobmw99.oldobsidian.matchers.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ConversionParser {
-	public static Collection<IConversion> miscMatchers = new ArrayList<>();
+	public static final Collection<IConversion> miscMatchers = new ArrayList<>();
 
 	//Shared between all matchers to avoid unnecessary object creation and growth
-	public ArrayList<IBlockStateMatcher> collectionMatcherList = new ArrayList<>();
+	private final ArrayList<IBlockStateMatcher> collectionMatcherList = new ArrayList<>();
 
 	public void read(JsonReader in) throws IOException {
 		switch(in.peek()){
@@ -36,27 +37,30 @@ public class ConversionParser {
 	}
 
 	public ConversionDescription readObject(JsonReader in) throws IOException {
+		IBlockStateMatcher liquid1 = null;
+		IBlockStateMatcher liquid2 = null;
+		IBlockStateMatcher dust = null;
+		IBlockState result = null;
 		in.beginObject();
-		ConversionDescription output = new ConversionDescription();
 		while(in.hasNext()) {
 			switch (in.nextName()) {
 				case "liquid1":
 				case "liquids1": {
-					output.liquid1 = readParameter(in);
+					liquid1 = readParameter(in);
 					break;
 				}
 				case "liquid2":
 				case "liquids2": {
-					output.liquid2 = readParameter(in);
+					liquid2 = readParameter(in);
 					break;
 				}
 				case "dust":
 				case "dusts": {
-					output.dust = readParameter(in);
+					dust = readParameter(in);
 					break;
 				}
 				case "result": {
-					output.result = PlaintextId.getBlockStateFrom(in.nextString());
+					result = PlaintextId.getBlockStateFrom(in.nextString());
 					break;
 				}
 				case "checkDustPower":{
@@ -66,7 +70,7 @@ public class ConversionParser {
 				default: throw new MalformedJsonException("Unrecognized JSON key. Accepted keys are : liquid1, liquids1, liquid2, liquids2, dust, dusts, checkDustPower, result");
 			}
 		}
-		return output;
+		return new ConversionDescription(liquid1, liquid2, dust, result);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,7 +122,7 @@ public class ConversionParser {
 		throw new MalformedJsonException("Invalid parameter type");
 	}
 
-	public void add(IConversion conversion){
+	public static void add(IConversion conversion){
 		if(!conversion.validate()){
 			OldObsidian.LOGGER.warn("Trying to register an invalid conversion: {}", conversion.toString());
 			return;
@@ -132,7 +136,7 @@ public class ConversionParser {
 		}
 	}
 
-	public void put(IBlockStateMatcher matcher, IConversion conversion){
+	public static void put(IBlockStateMatcher matcher, IConversion conversion){
 		if(matcher instanceof SimpleMatcher){
 			((SimpleMatcher<?>) matcher).addToMap(conversion);
 		} else {

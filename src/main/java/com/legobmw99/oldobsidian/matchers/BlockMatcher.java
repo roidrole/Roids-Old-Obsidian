@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockMatcher extends SimpleMatcher<Block> {
-	public Block block;
-	public static Map<Block, Collection<IConversion>> blockMatchers = new HashMap<>();
+	private final Block block;
+	public static final Map<Block, Collection<IConversion>> blockMatchers = new HashMap<>();
 
 	public BlockMatcher(Block block){
 		this.block = block;

@@ -10,10 +10,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 
 public class ConversionDescription implements IConversion{
-	public IBlockStateMatcher liquid1;
-	public IBlockStateMatcher liquid2;
-	public IBlockStateMatcher dust;
-	public IBlockState result;
+	public final IBlockStateMatcher liquid1;
+	public final IBlockStateMatcher liquid2;
+	public final IBlockStateMatcher dust;
+	public final IBlockState result;
+
+	public ConversionDescription(IBlockStateMatcher liquid1, IBlockStateMatcher liquid2, IBlockStateMatcher dust, IBlockState result) {
+		this.liquid1 = liquid1;
+		this.liquid2 = liquid2;
+		this.dust = dust;
+		this.result = result;
+	}
 
 	@Override
 	public IBlockStateMatcher getLiquid1(){

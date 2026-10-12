@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OredictMatcher extends SimpleMatcher<Integer> {
-	public int entryId;
-	public static Map<Integer, Collection<IConversion>> oreMatchers = new HashMap<>();
+	private final int entryId;
+	public static final Map<Integer, Collection<IConversion>> oreMatchers = new HashMap<>();
 
 	public OredictMatcher(String entry){
 		entryId = OreDictionary.getOreID(entry);

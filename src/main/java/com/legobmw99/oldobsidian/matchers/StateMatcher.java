@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StateMatcher extends SimpleMatcher<IBlockState> {
-	public IBlockState state;
-	public static Map<IBlockState, Collection<IConversion>> stateMatchers = new HashMap<>();
+	private final IBlockState state;
+	public static final Map<IBlockState, Collection<IConversion>> stateMatchers = new HashMap<>();
 
 	public StateMatcher(IBlockState state){
 		this.state = state;

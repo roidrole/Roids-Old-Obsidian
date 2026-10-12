@@ -6,7 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import java.util.regex.Pattern;
 
 public class RegexMatcher implements IBlockStateMatcher {
-	public final Pattern recipeObject;
+	private final Pattern recipeObject;
 
 	public RegexMatcher(String recipeObj){
 		recipeObj = recipeObj.replaceAll("\\*", ".*");

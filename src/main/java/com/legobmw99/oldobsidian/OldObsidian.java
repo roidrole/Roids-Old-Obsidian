@@ -40,8 +40,8 @@ import static com.legobmw99.oldobsidian.matchers.StateMatcher.stateMatchers;
 )
 public class OldObsidian {
 	public static Logger LOGGER;
-	public static Collection<IConversion> EMPTY = Collections.emptyList();
-	public static Collection<IConversion> miscMatchers = new ArrayList<>();
+	public static final Collection<IConversion> EMPTY = Collections.emptyList();
+	public static final Collection<IConversion> miscMatchers = new ArrayList<>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

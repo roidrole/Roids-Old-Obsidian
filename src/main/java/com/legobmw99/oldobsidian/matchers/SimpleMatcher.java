@@ -6,9 +6,9 @@ import java.util.*;
 
 // Matcher only used for hashing. Do not extend unless you know what you are doing
 public abstract class SimpleMatcher<T> implements IBlockStateMatcher {
-	public abstract T getInternal();
+	protected abstract T getInternal();
 
-	public abstract Map<T, Collection<IConversion>> getMap();
+	protected abstract Map<T, Collection<IConversion>> getMap();
 
 	public void addToMap(IConversion conversion){
 		this.getMap().compute(
