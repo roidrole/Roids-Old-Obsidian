@@ -41,8 +41,8 @@ dependencies {
     compileOnly 'curse.maven:crafttweaker-239197:8051578'
     compileOnly 'curse.maven:zenutil-401178:9057336'
     runtimeOnly 'curse.maven:crafttweaker-239197:8051578'
-    runtimeOnly 'zone.rong:mixinbooter:11.7'
-    runtimeOnly 'curse.maven:zenutil-401178:9057336'
+    //runtimeOnly 'zone.rong:mixinbooter:11.7'
+    //runtimeOnly 'curse.maven:zenutil-401178:9057336'
 
 
 

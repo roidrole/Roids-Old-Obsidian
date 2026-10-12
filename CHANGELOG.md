@@ -1,10 +1,10 @@
-## Unreleased :
+## 2.1.0 :
 **Added** 
 - A warning on using a RegEx matcher without special characters
 - CraftTweaker API (only has JSON and custom matchers)
 
 **Changed:**
-- oldobsidian folder will be created if it doesn't exist already
+- `oldobsidian` folder will be created if it doesn't exist already
 - Optimize away temporary collections
 - Optimize memory usage of CollectionMatcher
 - Optimize memory usage in the case of a single conversion having this fluid1
