@@ -52,7 +52,7 @@ public class ICTStateMatcher {
 	}
 
 	@ZenMethod
-	public static ICTStateMatcher from(Predicate<IBlockState> predicate){
+	public static ICTStateMatcher fromFunction(Predicate<IBlockState> predicate){
 		return new ICTStateMatcher(state -> predicate.test(CraftTweakerMC.getBlockState(state)));
 	}
 

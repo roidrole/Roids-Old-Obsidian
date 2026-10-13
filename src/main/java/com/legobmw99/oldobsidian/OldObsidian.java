@@ -112,13 +112,13 @@ public class OldObsidian {
 
 			@Override
 			public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+				ConversionParser.clear();
 				OldObsidian.loadConversions();
 			}
 		});
 	}
 
 	public static void loadConversions(){
-		ConversionParser.clear();
 		ConversionParser parser = new ConversionParser();
 		Path path = Paths.get("oldobsidian");
 		path.toFile().mkdir();
